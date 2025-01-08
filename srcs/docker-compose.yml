@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    env_file: .env
+    volumes:
+    - DB:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+    - wordpress_network
+    ports:
+    - "3306:3306"
+
+  nginx:
+    container_name: nginx
+    build:  ./requirements/nginx
+    ports:
+      - "443:443"
+    restart: on-failure
+    depends_on:
+      - wordpress
+    volumes:
+      - WordPress:/var/www/html
+    networks:
+      - wordpress_network
+  
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file: .env
+    depends_on:
+    - mariadb
+    - redis
+    volumes:
+    - WordPress:/var/www/html
+    networks:
+    - wordpress_network
+    restart: on-failure
+    expose:
+    - "9000"
+
+  redis:
+    container_name: redis
+    build: ./requirements/bonus/redis
+    restart: on-failure
+    volumes:
+    - redisData:/var/lib/redis
+    networks:
+    - wordpress_network
+    expose:
+    - "6379"
+
+  ftp:
+    container_name: FTP
+    build: ./requirements/bonus/FTP
+    restart: on-failure
+    env_file: .env
+    volumes:
+    - WordPress:/home/qdeviann/wordpress
+    networks:
+      - wordpress_network
+    ports:
+    - "21:21"
+    - "20100-20110:20100-20110"
+
+volumes:
+  DB:
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/qdeviann/data/DB
+  WordPress:
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/qdeviann/data/WordPress
+  redisData:
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/qdeviann/data/redisData
+
+networks:
+  wordpress_network:
+    driver: bridge
