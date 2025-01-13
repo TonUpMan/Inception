@@ -31,16 +31,4 @@ wp user create \
 
 wp user list --allow-root
 
-#### BONUS: redis cache #######################################
-
-wp plugin install redis-cache --activate --allow-root
-
-wp config set WP_CACHE true --type=constant --allow-root
-wp config set WP_REDIS_HOST "redis" --type=constant --allow-root
-wp config set WP_REDIS_PORT 6379 --type=constant --allow-root
-
-wp redis enable --allow-root
-
-################################################################
-
 php-fpm7.4 -F

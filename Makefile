@@ -1,6 +1,6 @@
 COMP_FILE = srcs/docker-compose.yml
 COMP = docker-compose
-DIRS = /home/qdeviann/data/DB /home/qdeviann/data/WordPress /home/qdeviann/data/redisData
+DIRS = /home/qdeviann/data/DB /home/qdeviann/data/WordPress
 
 all: up
 
@@ -49,10 +49,7 @@ wordpress:
 nginx:
 	@docker exec -it $$(docker ps -q -f name=nginx) bash
 
-redis:
-	@docker exec -it $$(docker ps -q -f name=redis) bash
-
 ftp:	
 	@docker exec -it $$(docker ps -q -f name=FTP) bash
 
-PHONY.: up stop re clean fclean ps ls vls prune mariadb wordpress nginx redis ftp 
+PHONY.: up stop re clean fclean ps ls vls prune mariadb wordpress nginx ftp 
